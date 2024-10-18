@@ -1,0 +1,63 @@
+name: 'Release'
+
+on:
+  repository_dispatch:
+    types: [release]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - run: echo '${{ toJson(github.event.client_payload) }}'
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ github.event.client_payload.sha }}
+      - name: 'Configuring Node.js'
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@ghostnumber7'
+      - name: 'Cache Modules Restore'
+        id: npm-cache
+        uses: actions/cache/restore@v4
+        env:
+          GITHUB_REF: refs/heads/master
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: 'Install Dependencies'
+        run: npm ci
+      - name: 'Build'
+        run: npm run pack
+      - name: 'Upload Artifact'
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: pack/*.tgz
+          file_glob: true
+          tag: ${{ github.event.client_payload.version }}
+      - name: 'Publish'
+        run: |
+          cd pack && npm publish --access public $(ls *.tgz)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Cache Modules Save'
+        uses: actions/cache/save@v4
+        env:
+          GITHUB_REF: refs/heads/master
+        if: always() && steps.npm-cache.outputs.cache-hit != 'true'
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}

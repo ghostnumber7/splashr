@@ -1,8 +1,12 @@
 {
   "extends": "amex/test",
+  "plugins": ["jest"],
   "rules": {
     "react/prop-types": 0,
     "react/button-has-type": 0,
     "react/jsx-filename-extension": 0
-  } 
+  },
+  "env": {
+    "jest/globals": true
+  }
 }

@@ -2,21 +2,29 @@ import React, {
   Fragment,
   useState,
   useRef,
+  useEffect,
 } from 'react';
 import PropTypes from 'prop-types';
-import useListener from '@use-it/event-listener';
 
 import useInitialDelay from './useInitialDelay';
 
+function useListener(event, callback, target) {
+  useEffect(() => {
+    target?.addEventListener(event, callback);
+    return () => {
+      target?.removeEventListener(event, callback);
+    };
+  }, [event, callback, target]);
+}
 const Splashr = ({
   splash,
   children,
-  minDelay,
-  extend,
-  transitionTime,
-  transitionTimingFunction,
-  onCompleted,
-  position,
+  minDelay = 2000,
+  extend = undefined,
+  transitionTime = 700,
+  transitionTimingFunction = 'ease',
+  onCompleted = () => {},
+  position = 'fixed',
 }) => {
   const showSplashScreen = useInitialDelay(minDelay, extend);
   const [isCompleted, setCompleted] = useState(false);
@@ -41,12 +49,12 @@ const Splashr = ({
     ? { transition: `opacity ${transitionTime}ms ${transitionTimingFunction}` }
     : {};
 
-  return isCompleted ? (
-    children
-  ) : (
-    <Fragment>
-      {children}
-      {!isCompleted && (
+  return isCompleted
+    ? children
+    : (
+      <Fragment>
+        {children}
+        {!isCompleted && (
         <div
           ref={splashScreenEl}
           style={{
@@ -63,30 +71,20 @@ const Splashr = ({
         >
           {splash}
         </div>
-      )}
-    </Fragment>
-  );
+        )}
+      </Fragment>
+    );
 };
 
 Splashr.propTypes = {
   splash: PropTypes.element.isRequired,
-  children: PropTypes.element,
+  children: PropTypes.node,
   minDelay: PropTypes.number,
   extend: PropTypes.bool,
   transitionTime: PropTypes.number,
   transitionTimingFunction: PropTypes.string,
   onCompleted: PropTypes.func,
   position: PropTypes.string,
-};
-
-Splashr.defaultProps = {
-  children: null,
-  minDelay: 2000,
-  extend: undefined,
-  transitionTime: 700,
-  transitionTimingFunction: 'ease',
-  onCompleted: () => {},
-  position: 'fixed',
 };
 
 export default Splashr;

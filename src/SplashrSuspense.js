@@ -6,7 +6,10 @@ import PropTypes from 'prop-types';
 import Splashr from './Splashr';
 import Dummy from './Dummy';
 
-const SplashrSuspense = ({ children, ...otherProps }) => {
+const SplashrSuspense = ({
+  children,
+  ...otherProps
+}) => {
   const [isSuspended, setSuspended] = useState(true);
 
   const memoizedDummy = useMemo(
@@ -27,11 +30,7 @@ const SplashrSuspense = ({ children, ...otherProps }) => {
 };
 
 SplashrSuspense.propTypes = {
-  children: PropTypes.element,
-};
-
-SplashrSuspense.defaultProps = {
-  children: null,
+  children: PropTypes.element.isRequired,
 };
 
 export default SplashrSuspense;

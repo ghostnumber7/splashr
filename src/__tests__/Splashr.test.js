@@ -1,5 +1,11 @@
+/**
+ * @jest-environment jsdom
+ */
 import React from 'react';
-import { render, cleanup, fireEvent } from 'react-testing-library';
+import {
+  render, cleanup, fireEvent, act,
+} from '@testing-library/react';
+import '@testing-library/jest-dom';
 
 import Splashr from '../Splashr';
 
@@ -19,7 +25,7 @@ describe('Splashr', () => {
     const splashEl = container.children[1].children[0];
     expect(splashEl.attributes['data-testid'].value).toBe('splash');
 
-    jest.advanceTimersByTime(2000);
+    act(() => jest.advanceTimersByTime(2000));
 
     expect(container.children.length).toBe(1);
     expect(container.children[0].attributes['data-testid'].value).toBe('children');
@@ -36,7 +42,7 @@ describe('Splashr', () => {
     const splashEl = container.children[1].children[0];
     expect(splashEl.attributes['data-testid'].value).toBe('splash');
 
-    jest.advanceTimersByTime(100);
+    act(() => jest.advanceTimersByTime(100));
 
     expect(container.children.length).toBe(1);
     expect(container.children[0].attributes['data-testid'].value).toBe('children');
@@ -57,10 +63,10 @@ describe('Splashr', () => {
     const splashEl = container.children[1].children[0];
     expect(splashEl.attributes['data-testid'].value).toBe('splash');
 
-    jest.advanceTimersByTime(2000);
+    act(() => jest.advanceTimersByTime(2000));
 
     expect(container.children.length).toBe(2);
-    jest.advanceTimersByTime(2000);
+    act(() => jest.advanceTimersByTime(2000));
 
     props.extend = false;
     rerender(<Splashr {...props}>{children}</Splashr>);
@@ -76,10 +82,10 @@ describe('Splashr', () => {
     const transitionEl = container.children[1];
 
     expect(container.children.length).toBe(2);
-    jest.advanceTimersByTime(2000);
+    act(() => jest.advanceTimersByTime(2000));
     expect(container.children.length).toBe(2);
     fireEvent.transitionEnd(transitionEl);
-    jest.advanceTimersByTime(100);
+    act(() => jest.advanceTimersByTime(100));
     expect(container.children.length).toBe(1);
   });
 
@@ -90,10 +96,10 @@ describe('Splashr', () => {
     const transitionEl = container.children[1];
 
     expect(container.children.length).toBe(2);
-    jest.advanceTimersByTime(2000);
+    act(() => jest.advanceTimersByTime(2000));
     expect(container.children.length).toBe(2);
     fireEvent.transitionEnd(transitionEl);
-    jest.advanceTimersByTime(700);
+    act(() => jest.advanceTimersByTime(700));
     expect(container.children.length).toBe(1);
   });
 
@@ -106,11 +112,11 @@ describe('Splashr', () => {
 
     expect(onCompleted).not.toHaveBeenCalled();
     expect(container.children.length).toBe(2);
-    jest.advanceTimersByTime(2000);
+    act(() => jest.advanceTimersByTime(2000));
     expect(container.children.length).toBe(2);
     expect(onCompleted).not.toHaveBeenCalled();
     fireEvent.transitionEnd(transitionEl);
-    jest.advanceTimersByTime(700);
+    act(() => jest.advanceTimersByTime(700));
     expect(container.children.length).toBe(1);
     expect(onCompleted).toHaveBeenCalledTimes(1);
   });
@@ -121,7 +127,7 @@ describe('Splashr', () => {
     );
     const transitionEl = container.children[1];
 
-    expect(transitionEl.style.position).toBe('absolute');
+    expect(transitionEl).toHaveStyle({ position: 'absolute' });
   });
 
   test('has default fixed position`', () => {
@@ -130,6 +136,6 @@ describe('Splashr', () => {
     );
     const transitionEl = container.children[1];
 
-    expect(transitionEl.style.position).toBe('fixed');
+    expect(transitionEl).toHaveStyle({ position: 'fixed' });
   });
 });

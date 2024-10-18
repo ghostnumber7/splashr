@@ -13,6 +13,9 @@ about it.
 <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/apple/155/water-wave_1f30a.png" alt="ocean wave">
 </div>
 
+## New in version 0.4.x
+
+* Support for React ^18.3.1
 
 ## New in Version 0.3.x
 
@@ -20,24 +23,26 @@ about it.
 
 ## Installation
 
+⚠️ Note: You need to configure npm to work with github packages for the `@ghostnumber7` scope if you want to use the package on this fork.
+
 ```bash
-$ npm i splashr
+$ npm i -S @ghostnumber7/splashr
 ```
 
 or
 
 ```bash
-$ yarn add splashr
+$ yarn add @ghostnumber7/splashr
 ```
 
-⚠️ Note: Splashr has a peerDependency on React 16.8.0 or greater.
+⚠️ Note: Splashr has a peerDependency on React `^16.8.0 || ^18.3.1`.
 
 ## Basic Usage
 
 Here is a simple example use of Splashr.
 
 ```js
-import Splashr from 'splashr';
+import Splashr from '@ghostnumber7/splashr';
 
 const splash = (
   <div className="splash-screen">
